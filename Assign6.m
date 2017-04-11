@@ -92,7 +92,7 @@ sinroutine:
 
 callingthesubroutines:
   mov d0, d11
-  mov d1, angle_in_radian
+  mov d1, d16
   bl tothepower
   mov poly_v, d0   //This is the calculated value of the to power function
 
@@ -126,7 +126,7 @@ nextsin:
   b callingthesubroutines
 
 sinend:
-  mov d11, angle_in_radian
+  mov d17, angle_in_radian
 
 /////////////////
 ///Start of the cosine part
@@ -134,12 +134,11 @@ sinend:
 cosinestart:
   mov addorsub, 1
   fmov d11, 2.0  //This is the starting value of the equation
-  fmov d12, d16  //d16 has the angle in radian saved from the sine part
   fmov angle_in_radian, 1.0
 
 callingthecossubroutines:
   mov d0, d11
-  mov d1, d12
+  mov d1, d16
   bl tothepower
   mov poly_v, d0   //This is the calculated value of the to power function
 
@@ -173,20 +172,20 @@ nextcos:
   b callingthesubroutines
 
 cosend:
-  fmov d12, angle_in_radian
+  fmov d18, angle_in_radian
 
 printfunction:
   adrp x0, fmt4
   add x0, x0, :lo12:fmt4
   mov d0, d16
-  mov d1, d11
-  mov d2, d12
+  mov d1, d17
+  mov d2, d18
   bl printf
 
   b top
 
 end
-  ldrp x29, x30, [sp], 16
+  ldrp x29, x30, [sp], dealloc
   ret
 
 
@@ -206,7 +205,9 @@ end
 /////////////////
 //This is the poly_v method
 /////////////////
-tothepower: 
+tothepower:
+  //The first arguement should be the number of times to square itself
+  //The second arguement should be the radians passed in  
   stp x29, x30, [sp, -16]!
   mov x29, sp
   mov d8, d0    //This will be the number of times d0 is powered to
